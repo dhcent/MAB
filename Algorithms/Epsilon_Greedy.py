@@ -13,7 +13,7 @@ class EpsilonGreedy:
         return
 
     #reinitialize count and num of arms
-    def initialize(self, counts = None, means = None, n_arms=0):
+    def reinitialize(self, counts = None, means = None, n_arms=0):
         self.n_arms = n_arms
         self.counts = [0] * self.n_arms if counts is None else counts
         self.means = [0] * self.n_arms if means is None else means
