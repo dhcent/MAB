@@ -1,11 +1,12 @@
+import numpy as np
 class GaussianArm:
-    def __init__(self, expected, std_dev=0.1):
-        self.expected_val = expected
+    def __init__(self, mu, std_dev=0.1):
+        self.mean = mu
         self.std_dev = std_dev
 
-    def update_val(self, new_expected):
-        self.expected_val = new_expected
+    def update_val(self, mu):
+        self.mean = mu
         return
 
     def draw(self):
-        return np.random.normal(self.expected_val, self.std_dev)
+        return np.random.normal(self.mean, self.std_dev)
