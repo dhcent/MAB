@@ -1,2 +1,2 @@
 # MAB
-Multi-Armed Bandit 
+Brownian Bandit simulation with Algorithms including Epsilon Greedy and UCB1.
