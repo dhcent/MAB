@@ -50,13 +50,18 @@ def run_algorithm(algorithm, horizon):
     return cumulative_rewards
 #horizon is # of steps or rounds that alg will run
 arms = []
-expected_vals = [rand.random() * 5 for i in range(30)]
+
+#n - num of arms
+n = 5
+
+#generate each arm based on Arm Type and n # of arms
+expected_vals = [rand.random() for i in range(n)]
 for val in expected_vals:
     arms.append(GaussianArm(val))
 
     #given algorithm + horizon
 eps = 0.01
-horizon = 2000
+horizon = 5000
 #Algorithms
 eps_algo = EpsilonGreedy(eps, n_arms = len(arms))
 UCB_algo = UCB1(n_arms = len(arms))
