@@ -1,5 +1,5 @@
 from Algorithms.Epsilon_Greedy import EpsilonGreedy
-from Arms.normal import NormalArm
+from Arms.static import NormalArm
 from Algorithms.Oracle import Oracle
 from Algorithms.UCB1 import UCB1
 from Arms.gaussian import GaussianArm

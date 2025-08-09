@@ -31,7 +31,6 @@ class EpsilonGreedy:
             #pick random arm
             return rand.randint(0,self.n_arms - 1)
 
-
     def update(self, arm, reward):
         self.counts[arm]+=1
         n = self.counts[arm]
