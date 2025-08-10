@@ -1,5 +1,5 @@
 #name probably inaccurate, but arm that just returns expected value. Similar to a "state informed" setting.
-class NormalArm:
+class StaticArm:
     def __init__(self, mu):
         self.mean = mu
 

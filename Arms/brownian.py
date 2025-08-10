@@ -6,12 +6,19 @@ class BrownianArm:
         self.drift = drift
         self.volatility = volatility
 
-    def simulate_brownian(self, steps = 1):
+    def simulate_brownian(self, dt = 1):
         #note, BM, variance is t, so std_dev is sqrt(t)
-        dW = np.random.normal(0, np.sqrt(steps))
-        self.mean = self.mean + (self.drift * steps + self.volatility * dW)
+        dW = np.random.normal(0, np.sqrt(dt))
+        self.mean = self.mean + (self.drift * dt + self.volatility * dW)
+
+        #bounded mean between between 0 and 1
+        if self.mean < 0:
+            self.mean = 0
+        elif self.mean > 1:
+            self.mean = 1
 
     def draw(self, dt=1):
         #updates mean based on brownian motion
-        self.simulate_brownian(dt)
-        return np.random.normal(self.mean, self.std_dev)
+        #self.simulate_brownian(dt) honestly should call simulate_brownian in main
+        #bounds reward between 0 and 1
+        return np.clip(np.random.normal(self.mean, self.std_dev), 0, 1)
