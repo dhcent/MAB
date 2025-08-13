@@ -11,14 +11,15 @@ class BrownianArm:
         dW = np.random.normal(0, np.sqrt(dt))
         self.mean = self.mean + (self.drift * dt + self.volatility * dW)
 
-        #bounded mean between between 0 and 1
-        if self.mean < 0:
-            self.mean = 0
-        elif self.mean > 1:
-            self.mean = 1
+        #ONLY IF WE WANT TO BOUND
+        # #bounded mean between 0 and 1
+        # if self.mean < 0:
+        #     self.mean = 0
+        # elif self.mean > 1:
+        #     self.mean = 1
 
     def draw(self, dt=1):
         #updates mean based on brownian motion
         #self.simulate_brownian(dt) honestly should call simulate_brownian in main
         #bounds reward between 0 and 1
-        return np.clip(np.random.normal(self.mean, self.std_dev), 0, 1)
+        return np.random.normal(self.mean, self.std_dev)
