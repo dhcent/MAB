@@ -1,6 +1,7 @@
 import numpy as np
 class BrownianArm:
     def __init__(self, mu, std_dev = 0.1, drift = 0.01, volatility = 0.02):
+        self.name = "BrownianArm"
         self.mean = mu
         self.std_dev = std_dev
         self.drift = drift
@@ -22,4 +23,5 @@ class BrownianArm:
         #updates mean based on brownian motion
         #self.simulate_brownian(dt) honestly should call simulate_brownian in main
         #bounds reward between 0 and 1
+        #oracle picks from all the arms draw val **
         return np.random.normal(self.mean, self.std_dev)

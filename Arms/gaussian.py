@@ -1,6 +1,7 @@
 import numpy as np
 class GaussianArm:
     def __init__(self, mu, std_dev=0.1):
+        self.name = "GaussianArm"
         self.mean = mu
         self.std_dev = std_dev
 

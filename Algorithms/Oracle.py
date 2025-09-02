@@ -4,15 +4,14 @@ class Oracle:
     def __init__(self, arms):
         #counts is # of times each arm was visited
         self.name = "Oracle"
-        self.arms = arms
 
-    #reinitialize count and num of arms
-    def reinitialize(self, arms):
-        self.arms = arms
-        return
+    # #reinitialize count and num of arms
+    # def reinitialize(self, arms):
+    #     self.arms = arms
+    #     return
 
-    def select_arm(self):
-        expected_vals = [arm.mean for arm in self.arms]
-        return expected_vals.index(max(expected_vals))
+    def select_arm(self, pulled_rewards):
+        # expected_vals = [arm.mean for arm in self.arms]
+        return pulled_rewards.index(max(pulled_rewards))
 
 

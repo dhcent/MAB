@@ -7,19 +7,18 @@ class UCB1:
         #counts is # of times each arm was visited
         self.name = "UCB1"
         self.n_arms = n_arms
-        self.counts = [0] * self.n_arms if counts is None else counts
-        self.means = [0] * self.n_arms if means is None else means
-        self.UCB_vals = [0] * self.n_arms if UCB_vals is None else UCB_vals
+        self.counts = np.zeros(n_arms) if counts is None else counts
+        self.means = np.zeros(n_arms) if means is None else means
+        self.UCB_vals = np.zeros(n_arms) if UCB_vals is None else UCB_vals
         self.rounds = 0
 
 
     #reinitialize count and num of arms
-    def reinitialize(self, counts = None, means = None, UCB_vals = None, n_arms=0):
-        self.n_arms = n_arms
-        self.counts = [0] * self.n_arms if counts is None else counts
-        self.means = [0] * self.n_arms if means is None else means
+    def reinitialize(self, counts = None, means = None, UCB_vals = None):
+        self.counts = np.zeros(self.n_arms) if counts is None else counts
+        self.means = np.zeros(self.n_arms) if means is None else means
         self.rounds = 0
-        self.UCB_vals = [0] * self.n_arms if UCB_vals is None else UCB_vals
+        self.UCB_vals = np.zeros(self.n_arms) if UCB_vals is None else UCB_vals
         return
 
     def select_arm(self):

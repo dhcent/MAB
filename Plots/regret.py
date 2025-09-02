@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 #allow label as parameter to allow flexibility between plotting regret and cumulative regret
-def plot_regret(regret_history, y_label="regret", log = False):
+def plot_regret(regret_history, algo_name, y_label="regret", log = False):
+    plt.title(algo_name)
     plt.ylabel(y_label)
     if log:
         plt.xlabel("log T")
