@@ -25,7 +25,7 @@ class UCB1:
         self.rounds += 1
         if self.rounds <= self.n_arms:
             return self.rounds - 1 #account for incrementing before pulling
-        return self.UCB_vals.index(max(self.UCB_vals))
+        return self.UCB_vals.argmax()
 
 
     def update(self, arm, reward):

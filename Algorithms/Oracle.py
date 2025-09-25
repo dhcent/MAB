@@ -1,4 +1,6 @@
 #oracle algorithm. Always picks the best arm.
+import numpy as np
+
 
 class Oracle:
     def __init__(self, arms):
@@ -12,6 +14,6 @@ class Oracle:
 
     def select_arm(self, pulled_rewards):
         # expected_vals = [arm.mean for arm in self.arms]
-        return pulled_rewards.index(max(pulled_rewards))
+        return pulled_rewards.argmax()
 
 

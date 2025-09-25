@@ -12,34 +12,17 @@ import numpy as np
 import random as rand
 import matplotlib.pyplot as plt
 
-
-def generate_arms(means):
-    arms = []
-    n = 9
-    # generate each arm based on Arm Type and n # of arms
-    std_dev = 0.1
-    drift = 0.01
-    volatility = 0.05
-    #9 Brownian, 1 Gaussian
-    for val in means:
-        arms.append(Arms.BrownianArm(val, std_dev, drift, volatility))
-
-    arms.append(Arms.GaussianArm(0.5, 0.1))
-    return arms
-
 # horizon is total # of steps
 def run_algorithm(algorithm, horizon, arms, epoch = 0):
     total_reward = 0
     oracle_total_reward = 0
     oracle = Oracle(arms)
-    # create a matrix of nxm
-    # n - # of arms
-    # m - # of steps (measures each mean at each step, used for plotting later)
 
-    pulled_rewards = [0 for i in range(len(arms))]
+    pulled_rewards = np.zeros(len(arms))
     mean_history = [[] for i in range(len(arms))]
-    regret_history = []
+    regret_history = [] #pseudo-regret
     cumulative_regret_history = [0]
+
     for t in range (horizon):
         if t != 0 and epoch != 0 and t % epoch == 0: #epoch system
             # print(f"Algorithm: {algorithm.select_arm()}")
@@ -47,67 +30,118 @@ def run_algorithm(algorithm, horizon, arms, epoch = 0):
             algorithm.reinitialize()
            # print("Reinitialized!")
 
-        #draw from each arm
+        #simulate arms
+        arm_means = np.zeros(len(arms))
         for i in range(len(arms)):
+            # simulate brownian
             if arms[i].name == "BrownianArm":
                 arms[i].simulate_brownian()
             pulled_rewards[i] = arms[i].draw()
+            arm_means[i] = arms[i].mean
 
-        #chosen arm is index
         #!!!!!!!!!!!!!! FOR EGREEDY THE BOUND IS STATE-INFORMED
         chosen_arm_index = algorithm.select_arm()
-        reward = pulled_rewards[chosen_arm_index]
-        algorithm.update(chosen_arm_index, reward)
 
-        total_reward += reward
+        #STATE INFORMED CASE:
+        algorithm.update(chosen_arm_index, arms[chosen_arm_index].mean)
 
-        #oracle action
-        oracle_chosen_arm_index = oracle.select_arm(pulled_rewards)
-        oracle_reward = pulled_rewards[oracle_chosen_arm_index]
+        #STATE OBLIVIOUS CASE:
+        #reward = pulled_rewards[chosen_arm_index]
+        #algorithm.update(chosen_arm_index, reward)
 
-        # used for plotting regret
-        regret = oracle_reward - reward
-        if t == 0:
-            cumulative_regret_history.append(regret)
-        else:
-            cumulative_regret_history.append(regret + cumulative_regret_history[t - 1])
+        #oracle action for pseudo-regret
+        oracle_chosen_arm_index = oracle.select_arm(arm_means)
+
+        # note: this is pseudo-regret
+        regret = arms[oracle_chosen_arm_index].mean - arms[chosen_arm_index].mean
         #for steady-state regret
         regret_history.append(regret)
 
         #used for plotting arm means
         for i in range(len(arms)):
             mean_history[i].append(arms[i].mean)
+        cumulative_regret_history = np.cumsum(regret_history)
 
-    #plot regret vs log rounds
-    Plots.plot_regret(cumulative_regret_history, algorithm.name, "cumulative_regret")
-    Plots.plot_regret(regret_history, algorithm.name)
-    Plots.plot_arm_means(mean_history, algorithm.name)
-
+    return regret_history, cumulative_regret_history, mean_history
 #horizon is # of steps or rounds that alg will run
 
 
-#computing average based on epoch length
-#volatility_avg = np.average(volatilities)
-#epoch_length = int(np.ceil(max(n+1, volatility_avg * np.sqrt(np.log(1 / volatility_avg))))) #cast as int and round up**
-n = 4
-expected_vals = [rand.random() for i in range(n)]
-arms1 = generate_arms(expected_vals)
-arms2 = generate_arms(expected_vals)
-for i in range(len(arms1)):
-    print(arms1[i].mean)
+def generate_arms(n, type="Gaussian"):
+    means = [rand.random() for i in range(n)]
+    arms = []
+    # generate each arm based on Arm Type and n # of arms
+    std_dev = 0.05
+    drift = 0
+    volatility = 0.75
+    #9 Brownian, 1 Gaussian
+    if type == "Brownian":
+        for i in range(len(means)):
+            arms.append(Arms.BrownianArm(means[i], std_dev, drift, volatility))
+    elif type == "Gaussian":
+        for i in range(len(means)):
+            arms.append(Arms.GaussianArm(means[i], std_dev))
+    # arms.append(Arms.GaussianArm(means[-1], std_dev, drift))
+    return arms, means
+
+n = 5
+arm_type = "Brownian"
+
+#NOTE: GENERATED ARMS ARE DIFFERENT WITH THIS CURRENT IMPLEMENTATION
+# arms1 = generate_arms(arm_type)
+arms2, expected_vals = generate_arms(n, arm_type)
+
+for i in range(len(arms2)):
+    print(arms2[i].mean)
 
 #given algorithm + horizon
-eps = 0.05
-horizon = 1000
+eps = 0.03
+horizon = 8000
+epoch = 10000
 
-
-eps_algo = EpsilonGreedy(eps, n_arms = len(arms1))
-# UCB_algo = UCB1(n_arms = len(arms1))
+# eps_algo = EpsilonGreedy(eps, n_arms = len(arms1))
+UCB_algo = UCB1(n_arms = len(arms2))
 #EXP3(gamma, n_arms)
-EXP3_algo = EXP3(0.1, len(arms1))
-epoch = 100
-run_algorithm(EXP3_algo, horizon, arms1, epoch)
-run_algorithm(eps_algo, horizon, arms2, epoch)
+#EXP3_algo = EXP3(0.1, len(arms1))
+# regret_history_1, cumulative_regret_history_1, mean_history_1 = run_algorithm(EXP3_algo, horizon, arms1, epoch)
+regret_history_2, cumulative_regret_history_2, mean_history_2 = run_algorithm(UCB_algo, horizon, arms2, epoch)
 # run_algorithm(UCB_algo, horizon, arms2, epoch)
+
+# plot cumulative regret history
+plt.figure() #makes a clean canvas
+#Plots.plot_regret(cumulative_regret_history_1, "EXP3", "Cumulative Regret", color="red")
+Plots.plot_regret(cumulative_regret_history_2, "UCB1", y_label="Cumulative Regret", color="blue")
+
+#n = horizon
+def calc_UCB_theoretical_regret_bound(n, exp_vals):
+    #Theoretical UCB regret bounds
+    theoretical_UCB_regret_bounds = 0
+    max_val = max(exp_vals)
+    for val in exp_vals:
+        if val != max_val:
+            theoretical_UCB_regret_bounds += np.log(n) / (max_val - val)
+    theoretical_UCB_regret_bounds *= 8
+    sum_of_difference = 0
+    for val in exp_vals:
+        sum_of_difference += max_val - val
+    theoretical_UCB_regret_bounds += (1 + (np.square(np.pi))/3) * sum_of_difference
+    return theoretical_UCB_regret_bounds
+
+UCB_bound = calc_UCB_theoretical_regret_bound(horizon, expected_vals)
+print(f"Theoretical UCB Regret Upperbound: {round(UCB_bound, 5)}")
+print(f"Actual Cumulative Regret: {round(cumulative_regret_history_2[-1], 5)}")
+
+# For per round regret
+# plt.figure()
+# Plots.plot_regret(regret_history_1, "EXP3", "Per-round-regret", color="green")
+# Plots.plot_regret(regret_history_2, "Epsilon-Greedy", "Per-round-regret", color="pink")
+# print(f"AVERAGE REGRET FOR 1: {np.average(regret_history_1)}")
+# print(f"AVERAGE REGRET FOR 2: {np.average(regret_history_2)}")
+# plot arm mean:
+# plt.figure()
+# Plots.plot_arm_means(mean_history_1, "EXP3")
+plt.figure()
+Plots.plot_arm_means(mean_history_2, "UCB1")
+plt.legend()
+plt.show()
 
 

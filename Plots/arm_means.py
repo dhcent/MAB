@@ -18,4 +18,3 @@ def plot_arm_means(arm_means_history, algo_name):
     for i in range(len(arm_means_history)):
         plot_arm_mean(arm_means_history[i], style[i % len(style)], i)
     plt.legend()
-    plt.show()

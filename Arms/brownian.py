@@ -12,12 +12,12 @@ class BrownianArm:
         dW = np.random.normal(0, np.sqrt(dt))
         self.mean = self.mean + (self.drift * dt + self.volatility * dW)
 
-        #ONLY IF WE WANT TO BOUND
-        # #bounded mean between 0 and 1
-        # if self.mean < 0:
-        #     self.mean = 0
-        # elif self.mean > 1:
-        #     self.mean = 1
+        #bound the mean between [0,1]
+        if self.mean > 1:
+            self.mean = 1
+        elif self.mean < 0:
+            self.mean = 0
+
 
     def draw(self, dt=1):
         #updates mean based on brownian motion
