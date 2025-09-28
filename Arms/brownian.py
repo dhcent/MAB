@@ -1,6 +1,6 @@
 import numpy as np
 class BrownianArm:
-    def __init__(self, mu, std_dev = 0.1, drift = 0.01, volatility = 0.02):
+    def __init__(self, mu, std_dev = 0.1, drift = 0, volatility = 0.02):
         self.name = "BrownianArm"
         self.mean = mu
         self.std_dev = std_dev
