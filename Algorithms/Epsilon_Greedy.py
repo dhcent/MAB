@@ -9,20 +9,17 @@ class EpsilonGreedy:
         self.n_arms = n_arms
         self.counts = [0] * self.n_arms if counts is None else counts
         self.means = [0] * self.n_arms if means is None else means
-        self.rounds = 0
 
     #reinitialize count and num of arms
     def reinitialize(self, counts = None, means = None):
         self.counts = [0] * self.n_arms if counts is None else counts
         self.means = [0] * self.n_arms if means is None else means
-        self.rounds = 0
         return
 
     def select_arm(self):
-        self.rounds += 1
         #force algorithm to pull arms once each time
-        if self.rounds <= self.n_arms:
-            return self.rounds - 1 #account for incrementing before pulling
+        if any(count == 0 for count in self.counts):
+            return self.counts.index(0)
         if rand.random() > self.epsilon:
             max_num = max(self.means)
             return self.means.index(max_num)
