@@ -1,2 +1,1 @@
-# MAB
-Brownian Bandit simulation with Algorithms including Epsilon Greedy and UCB1. This is for my research project under PhD student Anthony Della Pella at the University of Michigan. 
+MAB is a Multi-Armed Bandit simulation project exploring the "Brownian Bandit" problem, where reward probabilities drift over time instead of staying fixed. It implements and compares classic bandit algorithms, including Epsilon-Greedy and UCB1, to see how each handles this changing environment, with results visualized as plots. The project was built for a research assignment under PhD student Anthony Della Pella at the University of Michigan.
